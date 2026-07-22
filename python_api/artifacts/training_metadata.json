@@ -1,0 +1,56 @@
+{
+  "model_info": {
+    "algorithm": "XGBoost (with SMOTE in pipeline)",
+    "random_state": 42,
+    "training_date": "2026-05-21 04:13:57"
+  },
+  "dataset_info": {
+    "source": "SSGI 2024 - Provinsi Banten",
+    "n_train": 4252,
+    "n_test": 1063,
+    "n_features": 20,
+    "stunting_rate": 0.3184383819379116
+  },
+  "best_hyperparameters_xgb": {
+    "subsample": "0.8",
+    "reg_lambda": "0.5",
+    "reg_alpha": "1.0",
+    "n_estimators": "100",
+    "min_child_weight": "7",
+    "max_depth": "3",
+    "learning_rate": "0.1",
+    "gamma": "0.1",
+    "colsample_bytree": "0.9"
+  },
+  "performance_test_set": {
+    "accuracy": 0.7939793038570084,
+    "precision": 0.6537467700258398,
+    "recall": 0.7485207100591716,
+    "f1_score": 0.6979310344827586,
+    "auc_roc": 0.8707835135686595,
+    "auc_pr": 0.7928912089267085
+  },
+  "optimal_threshold": 0.604,
+  "feature_order": [
+    "P404_anak",
+    "P4072_anak",
+    "P409_IBU",
+    "P512",
+    "P505",
+    "P1509",
+    "FG1_GRAINS_ROOTS",
+    "FG2_LEGUMES",
+    "FG5_FLESH_FOODS",
+    "FG6_EGGS",
+    "FG7_VIT_A_RICH",
+    "FG8_OTHER_VEG_FRUIT",
+    "MPASI_DIVERSITY",
+    "MPASI_FREQUENCY",
+    "MDD_TERPENUHI",
+    "MPASI_MAD",
+    "MORBIDITY_INDEX",
+    "RECENT_ILLNESS",
+    "AGE_GROUP",
+    "SES_INDEX"
+  ]
+}
