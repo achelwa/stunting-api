@@ -1,42 +1,44 @@
 """
 Flask REST API — Stunting Prediction
 =====================================
-API ini menerima POST dari PHP, melakukan prediksi, dan return JSON.
-
-CARA MENJALANKAN:
-    pip install -r requirements.txt
-    python api.py
-
-    API jalan di: http://localhost:5000
 """
 
 import os
-import json
+import traceback
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from predict_pipeline import StuntingPredictor
 
 app = Flask(__name__)
-CORS(app)  # Untuk allow request dari PHP localhost
+CORS(app)
+
+# Tentukan path absolut folder artifacts
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ARTIFACTS_DIR = os.path.join(BASE_DIR, 'artifacts')
 
 # Load predictor sekali di startup
 try:
-    predictor = StuntingPredictor(artifacts_dir='./artifacts')
+    predictor = StuntingPredictor(artifacts_dir=ARTIFACTS_DIR)
     model_loaded = True
     print("=" * 60)
     print("✅ STUNTING PREDICTION API — SIAP")
     print("=" * 60)
-    print(f"Model    : {predictor.model.__class__.__name__}")
-    print(f"Features : {len(predictor.feature_order)}")
-    print(f"URL      : http://localhost:5000")
-    print(f"Threshold: {predictor.threshold}")
+    print(f"Model Path: {ARTIFACTS_DIR}")
+    print(f"Model Class: {predictor.model.__class__.__name__}")
+    print(f"Features   : {len(predictor.feature_order)}")
+    print(f"Threshold  : {predictor.threshold}")
     print("=" * 60)
     print("\nTekan Ctrl+C untuk stop API.\n")
 except Exception as e:
     predictor = None
     model_loaded = False
-    print(f"❌ Gagal load model: {e}")
-    print("Pastikan folder artifacts/ berisi model_xgb_full.pkl dan file pendukung")
+    print("=" * 60)
+    print(f"❌ GAGAL LOAD MODEL: {e}")
+    print("Detail Traceback:")
+    traceback.print_exc()
+    print("=" * 60)
+    print(f"Pastikan folder berikut ada: {ARTIFACTS_DIR}")
+    print("Dan berisi file model (e.g., model_xgb_full.pkl)")
 
 
 @app.route('/', methods=['GET'])
@@ -66,7 +68,7 @@ def predict():
     if not model_loaded:
         return jsonify({
             'status': 'error',
-            'message': 'Model not loaded. Periksa folder artifacts/'
+            'message': 'Model tidak berhasil dimuat di server. Cek log konsol.'
         }), 503
 
     if not request.is_json:
@@ -134,5 +136,4 @@ def not_found(error):
 
 
 if __name__ == '__main__':
-    # Production: ganti debug=False
     app.run(host='127.0.0.1', port=5000, debug=False)
