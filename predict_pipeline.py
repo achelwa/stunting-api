@@ -2,20 +2,39 @@
 Stunting Prediction Pipeline — End-to-End Inference
 ====================================================
 """
-
 import os
-import json
 import joblib
-import numpy as np
-import pandas as pd
-from typing import Dict, List, Any, Optional
 
-# Tambahkan import xgboost jika ada
-try:
-    import xgboost as xgb
-except ImportError:
-    xgb = None
+class StuntingPredictor:
+    def __init__(self,
+                 artifacts_dir: str = 'artifacts',
+                 model_filename: str = 'model_xgb_full.pkl',
+                 threshold: float = 0.604):
+        
+        # 1. KUNCI JAWABAN: Dapatkan path absolut dari folder di mana file predict_pipeline.py berada
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        
+        # 2. Gabungkan BASE_DIR dengan folder artifacts
+        if not os.path.isabs(artifacts_dir):
+            self.artifacts_dir = os.path.join(BASE_DIR, artifacts_dir)
+        else:
+            self.artifacts_dir = artifacts_dir
 
+        self.threshold = threshold
+        model_path = os.path.join(self.artifacts_dir, model_filename)
+
+        # Print log untuk memastikan path yang dibaca di server Cloud
+        print(f"[LOG SERVER] Membaca model dari path absolut: {model_path}")
+
+        # 3. Cek keberadaan file
+        if not os.path.exists(model_path):
+            raise FileNotFoundError(
+                f"Model tidak ditemukan di: {model_path}\n"
+                f"Isi dari folder BASE_DIR ({BASE_DIR}): {os.listdir(BASE_DIR)}"
+            )
+
+        # 4. Load Model
+        self.model = joblib.load(model_path)
 # =============================================================================
 # KONSTANTA — MAPPING INPUT USER KE KODE SSGI
 # =============================================================================
